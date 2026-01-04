@@ -1,7 +1,7 @@
 # Self Food Project (C++)
 ## Student Information
-Name: Ali Ahmadi
-Student Number: 40123456
+Name: Mahan Panahi
+Student Number: 1404
 ## Project Description
 This is a simple C++ project for managing a self food menu.
 The program shows a menu and gets user input.
