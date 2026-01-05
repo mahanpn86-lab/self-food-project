@@ -33,6 +33,8 @@ void add_food(string foodN, int price, int foodID, int day);
 void remove_food(int foodID);
 void edit_food(int foodID, string new_food, int new_price);
 void show_foods(int day, string meal);
+//===========convert==================
+int day_to_int(string day);
 int meal_to_int(string meal);
 //==================search food and QR=====================
 void search_food();
@@ -82,10 +84,14 @@ int main() {
 
 
     srand(time(0));
-    cout << "Welcome to the Food Site!" << endl;
-    cout << "\n1) Log in as admin\n2) Log in as user\n0) Exit" << endl;
-    int logchoice;
-    cin >> logchoice; //فقط برای انتخاب در صفحه لاگین
+    cout << "=========================================" << endl;
+    cout << "\033[1;34m        Welcome to the Food Site!\033[0m" << endl;
+    cout << "=========================================" << endl;
+    cout << "\033[36m\n1) Log in as admin\n2) Log in as user\n0) Exit\033[0m" << endl;
+    cout << "------------------------------------" << endl;
+    cout << "choose: ";
+    int logchoice;   //فقط برای انتخاب در صفحه لاگین
+    cin >> logchoice;
     string user, pas;
             switch(logchoice){
                 case 1:{
@@ -118,13 +124,20 @@ int main() {
 //==================Admin Pannel=====================
 if (user == "admin"  && pas == "admin_1234") {
     system("cls");
-    cout << "\033[4;34m Access granted. Welcome, admin!\033[0m" << endl;
-    cout << endl;
-    while (true){
-        cout << "1) Add a new student\n2) Delete a student\n3) Edit student information\n4) students List"
-			<<"\n5) Add food\n6) Delete food\n7) Edit food information\n8) Food Lists"
-			<<"\n9) View the list of reservations for a specific day\n10) Management reports\n0) Exit" << endl;
-        cout << "choose: ";
+    cout << "====================================" << endl;
+    cout << "Welcome " << user << " ❤️" << endl;
+    cout << "Logged in as ADMIN\n" << endl;
+    while (true){   //for admin menu
+        cout << "\n========== ADMIN PANEL ==========\n" << endl;
+        cout << "[ Users Management ]" << endl;
+        cout << "\033[36m1) Add a new student\n2) Delete a student\n3) Edit student information\n4) students List\n\033[0m" << endl;
+        cout << "[ Food Management ]" << endl;
+		cout <<"\033[36m5) Add food\n6) Delete food\n7) Edit food information\n8) Food Lists"
+			<<"\n9) View the list of reservations for a specific day\n\033[0m" << endl;
+        cout << "[ Reports ]" << endl;
+        cout << "\033[36m10) Management reports\033[0m\n\n\033[31m0) Exit\033[0m" << endl;
+        cout << "-------------------------------" << endl;
+        cout << "Choose: ";
         int admin_choice; //برای منوی ادمین
         cin >> admin_choice;
     
@@ -186,16 +199,17 @@ if (user == "admin"  && pas == "admin_1234") {
                 // add food
                 string foodN, meal;
                 int price;
+                string day;
                 int randomID = rand() % 9000 + 1000; // Generate a random food ID between 1000 and 9999
-                int day;
-                cout << "Enter the day of the week to add food (1: Saturday, ..., 7: Friday): ";
+                cout << "Enter the day of the week to add food (saturday, sunday, monday, tuesday, wednesday, thursday, friday): ";
                 cin >> day;
-                if (day < 1 || day > 7) {
-                    cout << "Invalid day selection!" << endl;
+                if (day_to_int(day) == -1) {
+                    cout << "\033[31mInvalid day selection!\033[0m" << endl;
                     break;
                 }
-                if (food_count[day - 1] >= MAX_FOODS) {
-                    cout << "Cannot add more foods for this day!" << endl;
+                int day_index = day_to_int(day);
+                if (food_count[day_index - 1] >= MAX_FOODS) {
+                    cout << "\033[31mCannot add more foods for this day!\033[0m" << endl;
                     break;
                 }
                 cout << "Enter breakfast or lunch or dinner: ";
@@ -205,10 +219,10 @@ if (user == "admin"  && pas == "admin_1234") {
                 getline(cin, foodN);
                 cout << "Enter the price of the new food: ";
                 cin >> price;
-                add_food(foodN, price, randomID, day);
+                add_food(foodN, price, randomID, day_index);
                 save_foods_file();
-                cout << "New food added successfully!" << endl;
-                show_foods(day, meal);
+                cout << "\033[32mNew food added successfully!\033[0m" << endl;
+                show_foods(day_index, meal);
                 cout << "\n=========================================================" << endl;
                 break;
             }
@@ -224,7 +238,6 @@ if (user == "admin"  && pas == "admin_1234") {
             }
             case 7: {
                 // edit food
-                cout << "\n=========================================" << endl;
                 cout << "Select the food ID you want to edit: " << endl;
                 int foodID;
                 cin >> foodID;
@@ -242,29 +255,31 @@ if (user == "admin"  && pas == "admin_1234") {
             }
             case 8: {
                 // show foods list
-                int day;
+                string day;
                 string meal;
-                cout << "Enter day to show foods: ";
+                cout << "Enter day to show foods (saturday, sunday, monday, tuesday, wednesday, thursday, friday): ";
                 cin >> day;
+                int day_index = day_to_int(day);
                 cout << "enter breakfast or lunch or dinner: ";
                 cin >> meal;
-                show_foods(day, meal);
+                show_foods(day_index, meal);
                 break;
             }
             case 9: {
                 // view reservations a day
-                int day;
-                cout << "Enter the day of the week to view reservations (1: Saturday, 2: Sunday, 3: Monday, 4: Tuesday, 5: Wednesday, 6: Thursday, 7: Friday): ";
+                string day;
+                cout << "Enter the day of the week to view reservations (saturday, sunday, monday, tuesday, wednesday, thursday, friday): ";
                 cin >> day;
-                if (day < 1 || day > 7)
+                int day_index = day_to_int(day);
+                if (day_index < 1 || day_index > 7)
                 {
-                    cout << "Invalid day selection!" << endl;
+                    cout << "\033[31mInvalid day selection!\033[0m" << endl;
                     break;
                 }
-                cout << "\nReservations for day " << day << ":\n";
+                cout << "\n\033[33mReservations for day " << day << ":\033[0m\n";
                 for (int meal = 0; meal < 3; meal++)
                 {
-                    int row = (day - 1) + meal * 7;
+                    int row = (day_index - 1) + meal * 7;
                     if (meal == 0) cout << "\n--- Breakfast ---\n";
                     else if (meal == 1) cout << "\n--- Lunch ---\n";
                     else cout << "\n--- Dinner ---\n";
@@ -279,7 +294,7 @@ if (user == "admin"  && pas == "admin_1234") {
                         }
                     }
                     if (!found)
-                        cout << "No reservations.\n";
+                        cout << "\033[31mNo reservations.\033[0m\n";
                 }
                 break;
             }
@@ -287,56 +302,68 @@ if (user == "admin"  && pas == "admin_1234") {
                 system("cls");
                 // management reports
                 int adminChoice2;
-                while(true)
+                cout << "1) Sorting the reservation list by registration time" << endl;
+                cout << "2) The most popular food" << endl;
+                cout << "3) Total income and total refunds" << endl;
+                cout << "4) Students with the most reservations" << endl;
+                cout << "0) Exit" << endl;
+                cout << "choose: ";
+                cin.ignore();
+                cin >> adminChoice2;
+                switch(adminChoice2)
                 {
-                    cout << "1) Sorting the reservation list by registration time" << endl;
-                    cout << "2) The most popular food" << endl;
-                    cout << "3) Total income and total refunds" << endl;
-                    cout << "4) Students with the most reservations" << endl;
-                    cout << "0) Exit" << endl;
-                    cout << "choose: ";
-                    cin.ignore();
-                    cin >> adminChoice2;
-                    switch(adminChoice2)
-                    {
-                        // void show_reservations_sorted();
-                        // void most_popular_food();
-                        // void income_and_refunds();
-                        // void top_reserving_students();
-                        case 1:{
-                            show_reservations_sorted();
-                            break;
-                        }
-                        case 2:{
-                            most_popular_food();
-                            break;
-                        }
-                        case 3:{
-                            income_and_refunds();
-                            break;
-                        }
-                        case 4:{
-                            top_reserving_students();
-                            break;
-                        }
-                        case 0:{
-                            break;
-                        }
-                        default:{
-                            cout << "Invalid choice. Please try again." << endl;
-                            break;
-                        }
-                    }//end switch management reports
-                    if (adminChoice2 == 0)
+                    // void show_reservations_sorted();
+                    // void most_popular_food();
+                    // void income_and_refunds();
+                    // void top_reserving_students();
+                    case 1:{
+                        show_reservations_sorted();
                         break;
-                }//end while for management reports
+                    }
+                    case 2:{
+                        most_popular_food();
+                        break;
+                    }
+                    case 3:{
+                        income_and_refunds();
+                        break;
+                    }
+                    case 4:{
+                        top_reserving_students();
+                        break;
+                    }
+                    case 0:{
+                        cout << "\033[33mAre you sure you want to Exit management reports menu? (y/n): \033[0m";
+                        char y;
+                        cin >> y;
+                        if (y == 'y' || y == 'Y')
+                            break;
+                    }
+                    default:{
+                        cout << "\033[31mInvalid choice. Please try again.\033[0m" << endl;
+                        break;
+                    }
+                }//end switch management reports
+                if (adminChoice2 == 0)
+                    break;
             }//end case 10
             case 0: {
-                cout << "\033[1;31mExiting the program. Goodbye!\033[0m" << endl;
+                cout << "\033[33mAre you sure you want to Exit? (y/n): \033[0m";
+                char y1;
+                cin >> y1;
+                if (y1 == 'y' || y1 == 'Y')
+                {
+                cout << "====================================" << endl;
+                cout << "Thanks for using Food Site ❤️" << endl;
+                cout << "Developed by Mahan Panahi" << endl;
+                cout << "====================================" << endl;
                 return 0;
+                }
+                else
+                    break;
             }
             default: {
-                cout << "Invalid choice. Please try again." << endl;
+                cout << "\033[31mInvalid choice. Please try again.\033[0m" << endl;
                 break;
             }
         if (admin_choice == 0) 
@@ -345,19 +372,18 @@ if (user == "admin"  && pas == "admin_1234") {
     }//end while admin pannel
 } //if --> admin pannel
 
+
+//==================User Pannel=====================
 else if (login(user,pas)) {
     int user_index = -1;
     system("cls");
-    cout << "\033[7;36mLogin successful! Welcome, " << user << "!\033[0m" << endl;
-    
     if (pas == "Aa@123456")
     {
         //==================تغییر اجباری رمز عبور=====================
-        cout << "\033[1;3;33mUser " << user << " your default password is " << pas << " you need to change it:\033[0m" << endl;
+        cout << "\033[3;33mUser " << user << " your default password is " << pas << " you need to change it:\033[0m" << endl;
         cout<< "please enter your new password: " ;
 
     //======================پیدا کردن اندیس کاربر========================
-
     for (int i = 0; i < user_count; i++)
     {
         if (usernames[i] == user)
@@ -366,9 +392,8 @@ else if (login(user,pas)) {
             break;
         }
     }
-
 if (user_index == -1) {
-    cout << "User index error!" << endl;
+    cout << "\033[31mUser index error!\033[0m" << endl;
     return 0;
 }
 
@@ -377,7 +402,7 @@ if (user_index == -1) {
         while (true){
             cin >> new_password;
             if (new_password == pas){
-                cout << "The password cannot be the primary password!\nTry again: ";
+                cout << "\033[31mThe password cannot be the primary password!\nTry again: \033[0m";
                 continue;
             }
             passwords[user_index] = new_password;
@@ -386,11 +411,26 @@ if (user_index == -1) {
             break;
         }//end while تغییر رمز عبور
     }//end if
-    
+
+    long long student_Number;
+        cout << "enter your student number: ";
+        cin >> student_Number;
+        if (check_user(student_Number) == -1) {
+            cout << "\033[31mStudent number not found!\033[0m" << endl;
+            return 0;
+        }
+        system("cls");
+//======================منوی کاربر===========================
     while (true){
-        cout << "\033[1;3;32m1) show foods list\n2) Food reservation\n3) View previous reservations"
-            << "\n4) Increase in inventory\n5) Change password\n6) Save my reservations to TXT\n"
-            << "7) Show QR codes for reservations\n0) Exit\033[0m" << endl;
+        cout << "\n\n=========== USER PANEL ===========" << endl;
+        int userIndex = check_user(student_Number);
+        cout << "\033[36musername: " << usernames[userIndex] << endl;
+        cout << "Balance: " << user_balance[userIndex] << "Tomans\n\033[0m" << endl;
+
+        cout << "\033[35m1) view foods list\n2) Reserve food\n3) My reservation"
+            << "\n4) Increase balance\n5) Change password\n6) my reservations (TXT)\n"
+            << "7) Show QR codes for reservations\n8) Search food\n\n0) Exit\033[0m" << endl;
+            cout << "-------------------------------" << endl;
     int user_choice;    //برای منوی کاربر
         cout << "choose: ";
     cin >> user_choice;
@@ -398,29 +438,30 @@ if (user_index == -1) {
         switch (user_choice){
             case 1: {
                 // show foods list
-                int day;
+                string day;
                 string meal;
-                cout << "Enter day to show foods: ";
+                cout << "Enter day to show foods (saturday, sunday, monday, tuesday, wednesday, thursday, friday): ";
                 cin >> day;
+                int day_index = day_to_int(day);
                 cout << "enter breakfast or lunch or dinner: ";
                 cin >> meal;
-                show_foods(day, meal);
+                show_foods(day_index, meal);
                 break;
             }
             case 2: {
                 // food_reservation();
-                user_reservation(user_index);
-                cout << "Your current balance is: " << user_balance[user_index] << endl;
-                cout << "Do you want your reservations to be saved in a text file? (y/n): ";
+                user_reservation(userIndex);
+                cout << "Your current balance is: " << user_balance[userIndex] << endl;
+                cout << "\033[33mDo you want your reservations to be saved in a text file? (y/n): \033[0m";
                 char choice;
                 cin >> choice;
                 if (choice == 'y' || choice == 'Y')
-                    save_my_reservations(user_index);
-                cout << "Do you want to generate a QR code for your reservations? (y/n): ";
+                    save_my_reservations(userIndex);
+                cout << "\033[33mDo you want to generate a QR code for your reservations? (y/n): \033[0m";
                 char qr_choice;
                 cin >> qr_choice;
                 if (qr_choice == 'y' || qr_choice == 'Y')
-                    generate_qr(user_index);
+                    generate_qr(userIndex);
                 break;
             }
             case 3: {
@@ -431,12 +472,6 @@ if (user_index == -1) {
                 int userIndex = check_user(student_Num);
                 for (int i = 0; i < 21; i++)
                 {
-                    // if (i >= 0 && i < 7)
-                    //     cout << "**********Breakfasts reservations**********" << endl;
-                    // if ( i >=7 && i < 14)
-                    //     cout << "**********Lunchs reservations**********" << endl;
-                    // if (i >= 14 && i < 21)
-                    //     cout << "**********Dinner reservations**********" << endl;
                     cout << users_reservations[i][userIndex] << endl;
                 }
                 break;
@@ -449,13 +484,13 @@ if (user_index == -1) {
                 cin >> student_Num;
                 int userIndex = check_user(student_Num);
                 if (userIndex == -1) {
-                    cout << "Student number not found!" << endl;
+                    cout << "\033[31mStudent number not found!\033[0m" << endl;
                     break;
                 }
                 cout << "Enter the amount you want to add to your wallet: ";
                 cin >> p;
                 user_balance [userIndex] += p;
-                cout << "The amount of " << p << " has been added to your account." << endl;
+                cout << "\033[32mThe amount of " << p << " has been added to your account.\033[0m" << endl;
                 cout << "Your inventory is: " << user_balance [userIndex];
                 break;
             }
@@ -467,35 +502,51 @@ if (user_index == -1) {
                 cin >> student_Num;
                 int userIndex = check_user(student_Num);
                 if (userIndex == -1) {
-                    cout << "Student number not found!" << endl;
+                    cout << "\033[31mStudent number not found!\033[0m" << endl;
                     break;
                 }
                 cout << "Enter your new password: ";
                 cin >> new_password;
                 if (new_password == passwords[userIndex]) {
-                    cout << "The new password cannot be the same as the old password!" << endl;
+                    cout << "\033[31mThe new password cannot be the same as the old password!\033[0m" << endl;
                     break;
                 }
                 passwords[userIndex] = new_password;
-                cout << "Password changed successfully!" << endl;
+                cout << "\033[32mPassword changed successfully!\033[0m" << endl;
                 break;
             }  
             case 6: {
                 // save my reservations to TXT
-                save_my_reservations(user_index);
+                save_my_reservations(userIndex);
                 break;
             }
             case 7: {
                 // show QR codes for reservations
-                generate_qr(user_index);
+                generate_qr(userIndex);
+                break;
+            case 8: {
+                //search food
+                search_food();
+            }
                 break;
             }
             case 0: {
-                cout << "\033[1;31mExiting the program. Goodbye!\033[0m" << endl;
+                char y;
+                cout << "Are you sure you want to Exit? (y/n):" << endl;
+                cin >> y;
+                if (y == 'y' || y == 'Y') {
+                    cout << "====================================" << endl;
+                    cout << "Thanks for using Food Site ❤️" << endl;
+                    cout << "Developed by Mahan Panahi" << endl;
+                    cout << "====================================" << endl;
+                    return 0;
+                }
+                else
+                    break;
                 return 0;
             }
             default: {
-                cout << "Invalid choice. Please try again." << endl;
+                cout << "\033[31mInvalid choice. Please try again.\033[0m" << endl;
                 break;
         }
 
@@ -507,7 +558,6 @@ if (user_index == -1) {
 
 else
     cout << "\033[3;5;31m\n\aInvalid password or username!\033[0m" << endl;
-
     return 0;
 }
 
@@ -554,12 +604,12 @@ void remove_user(long long studentN)
                 user_balance[j] = user_balance[j + 1];
             }
             user_count--;
-            cout << "User removed successfully." << endl;
+            cout << "\033[32mUser removed successfully.\033[0m" << endl;
             save_reservations_file();
             return;
         }
     }
-    cout << "Student number not found!" << endl;
+    cout << "\033[31mStudent number not found!\033[0m" << endl;
 }
 
 
@@ -572,14 +622,16 @@ void edit_user(long long studentN)
             string new_username;
             cout << "Current username: " << usernames[i] << endl;
             cout << "Enter new username: ";
+            cout << "\033[33m";
             cin >> new_username;
+            cout << "\033[0m";
             usernames[i] = new_username;
-            cout << "Username updated successfully!" << endl;
-            cout << "New username: " << usernames[i] << endl;
+            cout << "\033[32mUsername updated successfully!\033[0m" << endl;
+            cout << "\033[36mNew username: " << usernames[i] << "\033[0m" << endl;
             return;
         }
     }
-    cout << "Student number not found!" << endl;
+    cout << "\033[31mStudent number not found!\033[0m" << endl;
 }
 
 
@@ -600,7 +652,7 @@ void add_food(string foodN, int price, int foodID, int day)
 {
     if (day < 1 || day > 7)
     {
-        cout << "Invalid day selection!" << endl;
+        cout << "\033[31mInvalid day selection!\033[0m" << endl;
         return;
     }
 
@@ -615,8 +667,8 @@ void add_food(string foodN, int price, int foodID, int day)
             food_prices[day - 1][food_count[day - 1]] = price;
             food_ID[day - 1][food_count[day - 1]] = foodID;
             food_count[day - 1]++;
-            cout << "Food item '" << foodN << "' added successfully to day " << day << "." << endl;
-            cout << "Price: " << price << ", Food ID: " << foodID << endl;
+            cout << "\033[32mFood item '" << foodN << "' added successfully to day " << day << ".\033[0m" << endl;
+            cout << "\033[36mPrice: " << price << ", Food ID: " << foodID << "\033[0m" << endl;
             break;
         }
         case 1: {
@@ -624,8 +676,8 @@ void add_food(string foodN, int price, int foodID, int day)
             food_prices[(day - 1) + 7][food_count[(day - 1) + 7]] = price;
             food_ID[(day - 1) + 7][food_count[(day - 1) + 7]] = foodID;
             food_count[(day - 1) + 7]++;
-            cout << "Food item '" << foodN << "' added successfully to day " << day << "." << endl;
-            cout << "Price: " << price << ", Food ID: " << foodID << endl;
+            cout << "\033[32mFood item '" << foodN << "' added successfully to day " << day << ".\033[0m" << endl;
+            cout << "\033[36mPrice: " << price << ", Food ID: " << foodID << "\033[0m" << endl;
             break;
         }
         case 2: {
@@ -633,12 +685,12 @@ void add_food(string foodN, int price, int foodID, int day)
             food_prices[(day - 1) + 14][food_count[(day - 1) + 14]] = price;
             food_ID[(day - 1) + 14][food_count[(day - 1) + 14]] = foodID;
             food_count[(day - 1) + 14]++;
-            cout << "Food item '" << foodN << "' added successfully to day " << day << "." << endl;
-            cout << "Price: " << price << ", Food ID: " << foodID << endl;
+            cout << "\033[32mFood item '" << foodN << "' added successfully to day " << day << ".\033[0m" << endl;
+            cout << "\033[36mPrice: " << price << ", Food ID: " << foodID << "\033[0m" << endl;
             break;
         }
         default: {
-            cout << "Invalid meal type!" << endl;
+            cout << "\033[31mInvalid meal type!\033[0m" << endl;
             return;
         }
     }//end switch meal
@@ -659,10 +711,10 @@ void remove_food(int foodID)
                     {
                         user_balance[u] += food_prices[day][i];
                         users_reservations[day][u] = "";
-                        cout << "Reservation for user " << usernames[u] 
+                        cout << "\033[36mReservation for user " << usernames[u] 
                             << " has been canceled and " 
                             << food_prices[day][i] 
-                            << " returned to their balance." << endl;
+                            << " returned to their balance.\033[0m" << endl;
                     }
                 }
                 //************ حذف غذا از آرایه ************
@@ -673,7 +725,7 @@ void remove_food(int foodID)
                     food_ID[day][k] = food_ID[day][k + 1];
                 }
                 food_count[day]--;
-                cout << "Food item with ID " << foodID << " removed successfully from day " << (day % 7) + 1 << "." << endl;
+                cout << "\033[32mFood item with ID " << foodID << " removed successfully from day " << (day % 7) + 1 << ".\033[0m" << endl;
                 save_foods_file();
                 save_reservations_file();
                 save_users_file();
@@ -681,7 +733,7 @@ void remove_food(int foodID)
             }
         }
     }
-    cout << "Food ID not found!" << endl;
+    cout << "\033[31mFood ID not found!\033[0m" << endl;
 }
 
 
@@ -697,12 +749,12 @@ void edit_food(int foodID, string new_food, int new_price)
             {
                 food_names[day][i] = new_food;
                 food_prices[day][i] = new_price;
-                cout << "Food item updated successfully for day " << (day % 7 + 1) << "!" << endl;
+                cout << "\033[32mFood item updated successfully for day " << (day % 7 + 1) << "!\033[0m" << endl;
                 return;
             }
         }
     }
-    cout << "Food ID not found!" << endl;
+    cout << "\033[31mFood ID not found!\033[0m" << endl;
 }
 
 
@@ -712,12 +764,13 @@ void show_foods(int day, string meal)
 {
     int meal_type = meal_to_int(meal);
     int row = (day - 1) + meal_type * 7;
+    int day_index = day_to_int(meal);
     if (day < 1 || day > 7)
     {
-        cout << "Invalid day selection!" << endl;
+        cout << "\033[31mInvalid day selection!\033[0m" << endl;
         return;
     }
-    cout << "Foods for day " << day << ":\n";
+    cout << "Foods for day " << day_index << ":\n";
     for (int i = 0; i < food_count[row]; i++)
     {
         cout << i << ") " << food_names[row][i] 
@@ -734,15 +787,16 @@ void show_foods(int day, string meal)
 void user_reservation(int user_index)
 {
     string food_name;
-    int day;
+    string day;
 
     while (true)
     {
-        cout << "Enter the day of the week for reservation (1=Saturday, ..., 7=Friday): ";
+        cout << "Enter the day of the week for reservation (saturday, sunday, monday, tuesday, wednesday, thursday, friday): ";
         cin >> day;
-        if (day < 1 || day > 7)
+        int day_index = day_to_int(day);
+        if (day_index < 1 || day_index > 7)
         {
-            cout << "Invalid day selection!" << endl;
+            cout << "\033[31mInvalid day selection!\033[0m" << endl;
             continue;
         }
 
@@ -750,8 +804,8 @@ void user_reservation(int user_index)
         string Meal;
         cin >> Meal;
         int meal_type = meal_to_int(Meal);
-        int row = (day - 1) + meal_type * 7;
-        show_foods(day, Meal);
+        int row = (day_index - 1) + meal_type * 7;
+        show_foods(day_index, Meal);
         cout << "Enter food name to reserve: ";
         cin.ignore();
         getline(cin, food_name);
@@ -767,24 +821,24 @@ void user_reservation(int user_index)
         }
         if (price == -1)
         {
-            cout << "Food not found on this day!" << endl;
+            cout << "\033[31mFood not found on this day!\033[0m" << endl;
             continue;
         }
         if (users_reservations[row][user_index] != "")
         {
-            cout << "You have already made a reservation for day " << day << "." << endl;
+            cout << "\033[31mYou have already made a reservation for day " << day_index << ".\033[0m" << endl;
             return;
         }
         if (user_balance[user_index] < price)
         {
-            cout << "Not enough balance. Please increase your balance." << endl;
+            cout << "\033[31mNot enough balance. Please increase your balance.\033[0m" << endl;
             return;
         }
         users_reservations[row][user_index] = food_name;
         user_balance[user_index] -= price;
         save_reservations_file();
         save_users_file();
-        cout << "Reservation for '" << food_name << "' successful for day " << day << "." << endl;
+        cout << "\033[32mReservation for '" << food_name << "' successful for day " << day_index << ".\033[0m" << endl;
         break;
     }
 }
@@ -961,7 +1015,21 @@ int meal_to_int(string meal)
     if (meal == "dinner")    return 2;
     return -1;
 }
-
+int day_to_int(string day)
+{
+    for (int i = 0; i < day.length(); i++)
+        if (day[i] >= 'A' && day[i] <= 'Z')
+            day[i] += 32;
+    if (day == "saturday") return 1;
+    if (day == "sunday")     return 2;
+    if (day == "monday")    return 3;
+    if (day == "tuesday")    return 4;
+    if (day == "wednesday")    return 5;
+    if (day == "thursday")    return 6;
+    if (day == "friday")    return 7;
+    else
+    return -1;
+}
 //==================search food=====================
 void search_food()
 {
@@ -993,7 +1061,7 @@ void search_food()
                 }
             }
         }
-        if (!found) cout << "Food not found!\n";
+        if (!found) cout << "\033[31mFood not found!\033[0m" << endl;
     }
     else if (choice == 2)
     {
@@ -1007,17 +1075,17 @@ void search_food()
             int row = (day - 1) + meal_type * 7;
             for (int i = 0; i < food_count[row]; i++)
             {
-                cout << "Day: " << day 
+                cout << "Day: " << day
                     << " | Name: " << food_names[row][i]
                     << " | Price: " << food_prices[row][i]
                     << " | ID: " << food_ID[row][i] << endl;
                 found = true;
             }
         }
-        if (!found) cout << "No foods found for this meal type!\n";
+        if (!found) cout << "\033[31mNo foods found for this meal type!\033[0m" << endl;
     }
     else
-        cout << "Invalid choice!\n";
+        cout << "\033[31mInvalid choice!\033[0m" << endl;
 }
 
 //=======================save my reservations==========================
@@ -1171,5 +1239,3 @@ void top_reserving_students()   //دانشجویان با بیشترین رزر�
             cout << usernames[u] << " | Student number: " << student_number[u] << endl;
     }
 }
-
-//==============ساخت هش کد برای رمز ها=================
